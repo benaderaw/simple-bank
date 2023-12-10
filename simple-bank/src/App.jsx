@@ -6,10 +6,12 @@ import Main from "./components/Main";
 const initialState = {
   balance: 0,
   isDisabled: true,
+  loanBalance: 0,
 };
 
 const DEPOSIT_AMOUNT = 150;
 const WITHDRAW_AMOUNT = 50;
+const LOAN_AMOUNT = 5000;
 
 const reducer = function (state, action) {
   //
@@ -21,15 +23,24 @@ const reducer = function (state, action) {
     case "withdraw":
       return { ...state, balance: state.balance - WITHDRAW_AMOUNT };
 
+    case "loanRequest": {
+      return {
+        ...state,
+        balance: state.balance + LOAN_AMOUNT,
+        loanBalance: LOAN_AMOUNT,
+      };
+    }
+
     default:
       return {};
   }
 };
 
 function App() {
-  const [{ balance, isDisabled }, dispatch] = useReducer(reducer, initialState);
-
-  console.log(balance);
+  const [{ balance, isDisabled, loanBalance }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
 
   return (
     <Main>
@@ -58,7 +69,18 @@ function App() {
         withdraw {WITHDRAW_AMOUNT}
       </button>
 
-      <button disabled={isDisabled}>request a loan of 5000</button>
+      <button
+        disabled={isDisabled}
+        onClick={() => {
+          console.log(loanBalance);
+
+          if (loanBalance > 0) return;
+          dispatch({ type: "loanRequest" });
+        }}
+      >
+        request a loan of 5000
+      </button>
+
       <button disabled={isDisabled}>pay loan</button>
       <button disabled={isDisabled}>close account</button>
     </Main>
