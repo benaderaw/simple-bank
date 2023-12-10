@@ -29,8 +29,19 @@ const reducer = function (state, action) {
         balance: state.balance + LOAN_AMOUNT,
         loanBalance: LOAN_AMOUNT,
       };
-    case "payLoan":
-      return { ...state, balance: state.balance - LOAN_AMOUNT, loanBalance: 0 };
+    case "payLoan": {
+      const remainingLoanBalance =
+        state.balance < LOAN_AMOUNT ? state.balance : LOAN_AMOUNT;
+
+      return {
+        ...state,
+        balance: state.balance - remainingLoanBalance,
+        loanBalance: 0,
+      };
+    }
+
+    case "closeAccount":
+      return { ...state, ...initialState };
 
     default:
       return {};
@@ -60,14 +71,18 @@ function App() {
         disabled={isDisabled}
         onClick={() => dispatch({ type: "deposit" })}
       >
-        Deposit {DEPOSIT_AMOUNT}
+        Deposit {isDisabled ? "" : DEPOSIT_AMOUNT}
       </button>
 
       <button
         disabled={isDisabled}
-        onClick={() => dispatch({ type: "withdraw" })}
+        onClick={() => {
+          if (balance === 0) return;
+
+          dispatch({ type: "withdraw" });
+        }}
       >
-        withdraw {WITHDRAW_AMOUNT}
+        withdraw {isDisabled ? "" : WITHDRAW_AMOUNT}
       </button>
 
       <button
@@ -77,7 +92,7 @@ function App() {
           dispatch({ type: "loanRequest" });
         }}
       >
-        request a loan of {LOAN_AMOUNT}
+        request a loan {isDisabled ? "" : "of " + LOAN_AMOUNT}
       </button>
 
       <button
@@ -91,7 +106,12 @@ function App() {
         pay loan
       </button>
 
-      <button disabled={isDisabled}>close account</button>
+      <button
+        disabled={isDisabled}
+        onClick={() => dispatch({ type: "closeAccount" })}
+      >
+        close account
+      </button>
     </Main>
   );
 }
