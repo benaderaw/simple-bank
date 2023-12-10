@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import "./App.css";
-import Button from "./components/Button";
+// import Button from "./components/Button";
 import Main from "./components/Main";
 
 const initialState = {
@@ -23,13 +23,14 @@ const reducer = function (state, action) {
     case "withdraw":
       return { ...state, balance: state.balance - WITHDRAW_AMOUNT };
 
-    case "loanRequest": {
+    case "loanRequest":
       return {
         ...state,
         balance: state.balance + LOAN_AMOUNT,
         loanBalance: LOAN_AMOUNT,
       };
-    }
+    case "payLoan":
+      return { ...state, balance: state.balance - LOAN_AMOUNT, loanBalance: 0 };
 
     default:
       return {};
@@ -46,7 +47,7 @@ function App() {
     <Main>
       <h1>Simple Bank</h1>
       <p>Balance: {balance}</p>
-      <p>Loan: X</p>
+      <p>Loan: {loanBalance}</p>
 
       <button
         disabled={isDisabled ? false : true}
@@ -72,16 +73,24 @@ function App() {
       <button
         disabled={isDisabled}
         onClick={() => {
-          console.log(loanBalance);
-
           if (loanBalance > 0) return;
           dispatch({ type: "loanRequest" });
         }}
       >
-        request a loan of 5000
+        request a loan of {LOAN_AMOUNT}
       </button>
 
-      <button disabled={isDisabled}>pay loan</button>
+      <button
+        disabled={isDisabled}
+        onClick={() => {
+          if (loanBalance === 0) return;
+
+          dispatch({ type: "payLoan" });
+        }}
+      >
+        pay loan
+      </button>
+
       <button disabled={isDisabled}>close account</button>
     </Main>
   );
