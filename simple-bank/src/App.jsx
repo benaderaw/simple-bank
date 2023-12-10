@@ -9,6 +9,7 @@ const initialState = {
 };
 
 const DEPOSIT_AMOUNT = 150;
+const WITHDRAW_AMOUNT = 50;
 
 const reducer = function (state, action) {
   //
@@ -17,6 +18,8 @@ const reducer = function (state, action) {
       return { ...state, balance: 500, isDisabled: false };
     case "deposit":
       return { ...state, balance: state.balance + DEPOSIT_AMOUNT };
+    case "withdraw":
+      return { ...state, balance: state.balance - WITHDRAW_AMOUNT };
 
     default:
       return {};
@@ -48,7 +51,13 @@ function App() {
         Deposit {DEPOSIT_AMOUNT}
       </button>
 
-      <button disabled={isDisabled}>withdraw</button>
+      <button
+        disabled={isDisabled}
+        onClick={() => dispatch({ type: "withdraw" })}
+      >
+        withdraw {WITHDRAW_AMOUNT}
+      </button>
+
       <button disabled={isDisabled}>request a loan of 5000</button>
       <button disabled={isDisabled}>pay loan</button>
       <button disabled={isDisabled}>close account</button>
